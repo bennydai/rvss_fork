@@ -1,0 +1,20 @@
+exp_name: 'alexnet_nograd_3fc_1'
+
+init_lr: 2.0e-4
+
+batch_size: 64
+
+n_epochs: 300
+
+weight_decay: 1.0e-4
+
+num_classes: 4
+
+load_best: 1
+
+gpu_ids: '0'
+
+lr_scheduler:
+    step_size: 10
+    gamma: 0.85
+
