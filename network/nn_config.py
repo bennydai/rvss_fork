@@ -14,6 +14,13 @@ os.environ['CUDA_VISIBLE_DEVICES'] = cfg['gpu_ids']
 
 
 class NNState:
+    """
+    THIS SCRIPT DOES NOT REQUIRE MODIFICATION
+
+    This class functions to load the weights and hyper-parameters onto the
+    network structured declared in ./net_model/*.py or and to save weights and
+    hyper-parameters.
+    """
     def __init__(self, mode):
         self.batch_size = cfg['batch_size']
         self.n_epochs = cfg['n_epochs']

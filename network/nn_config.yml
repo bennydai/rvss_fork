@@ -1,19 +1,28 @@
-exp_name: 'alexnet_nograd_3fc_1'
+# This yaml file contains parameters essential to the network training
 
-init_lr: 2.0e-4
+# change the experiment name to start training a new one
+exp_name: 'pre_trained_01'
+
+init_lr: 2.0e-4 # initial learning rate
 
 batch_size: 64
 
-n_epochs: 300
+n_epochs: 80 # total number of epochs
 
 weight_decay: 1.0e-4
 
 num_classes: 4
 
+# Two sets of network weights all kept during training:
+#   the latest epoch (not necessarily the best),
+#   and the best epoch evaluated against the evaluation metric.
 load_best: 1
 
 gpu_ids: '0'
 
+# This parameters control how fast the learning rate decreases.
+#   For example, here, the learning rate is designed to be its 85%
+#   every 10 epoch.
 lr_scheduler:
     step_size: 10
     gamma: 0.85
