@@ -2,6 +2,7 @@ import numpy as np
 import os
 import sys
 sys.path.insert(0, "{}/integration".format(os.getcwd()))
+sys.path.insert(0, "../integration")
 import penguinPi as ppi
 
 def calibrateWheelRadius():

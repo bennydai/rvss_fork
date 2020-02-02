@@ -87,6 +87,7 @@ class Keyboard:
 if __name__ == "__main__":
     import os, sys
     sys.path.insert(0, "{}/integration".format(os.getcwd()))
+    sys.path.insert(0, "../integration")
     import penguinPiC
     ppi = penguinPiC.PenguinPi()
 
