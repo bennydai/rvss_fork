@@ -18,10 +18,10 @@ class Train:
              transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                   std=[0.229, 0.224, 0.225])])
 
-        self.train_data = datasets.ImageFolder('./rvss_data/train',
+        self.train_data = datasets.ImageFolder('./nn_dataset/train',
                                                transform=img_transforms)
         print(self.train_data.class_to_idx)
-        self.eval_data = datasets.ImageFolder('./rvss_data/eval',
+        self.eval_data = datasets.ImageFolder('./nn_dataset/eval',
                                               transform=img_transforms)
 
     def train(self):
