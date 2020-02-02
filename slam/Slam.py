@@ -125,59 +125,9 @@ class Slam:
             self.P[-2,-2] = self.init_lm_cov**2
             self.P[-1,-1] = self.init_lm_cov**2
 
-
-    def draw_slam_state(self, ax) -> None:
-        # Draw landmarks
-        if self.number_landmarks() > 0:
-            ax.plot(self.markers[0,:], self.markers[1,:], 'ko')
-
-        # Draw robot
-        arrow_scale = 0.4
-        ax.arrow(self.robot.state[0,0], self.robot.state[1,0],
-                 arrow_scale * np.cos(self.robot.state[2,0]), arrow_scale * np.sin(self.robot.state[2,0]),
-                 head_width=0.3*arrow_scale)
-
-        # Draw covariance
-        robot_cov_ellipse = self.make_ellipse(self.robot.state[0:2,0], self.P[0:2,0:2])
-        ax.plot(robot_cov_ellipse[0,:], robot_cov_ellipse[1,:], 'r-')
-
-        for i in range(self.number_landmarks()):
-            lmi = self.markers[:,i]
-            Plmi = self.P[3+2*i:3+2*(i+1),3+2*i:3+2*(i+1)]
-            lmi_cov_ellipse = self.make_ellipse(lmi, Plmi)
-            ax.plot(lmi_cov_ellipse[0,:], lmi_cov_ellipse[1,:], 'b-')
-        
-        ax.axis('equal')
-        ax.set_xlim(-5+self.robot.state[0],5+self.robot.state[0])
-        ax.set_ylim(-5+self.robot.state[1],5+self.robot.state[1])
-    
-    @staticmethod
-    def make_ellipse(x, P):
-        p = 0.5
-        s = -2 * np.log(1 - p)
-        e_vals, e_vecs = np.linalg.eig(P * s)
-
-        t = np.linspace(0, 2 * np.pi)
-        ellipse = (e_vecs @ np.sqrt(np.diag(e_vals))) @ np.block([[np.cos(t)],[np.sin(t)]])
-        ellipse = ellipse + x.reshape(-1,1)
-
-        return ellipse
-
-
-class SlamArtist:
-    hw = 0.3
-    arrow_scale = 0.4
-    def __init__(self, ax):
-        # Prepare plotting components
-        self.a_markers, = ax.plot([],[],'ko')
-        # self.a_markers_cov = ax.plot([], [], 'r-')
-
-        self.a_robot = ax.arrow(0,0,0,0, head_width=self.hw*self.arrow_scale)
-        self.a_robot_cov, = ax.plot([], [], 'r-')
-        
-
     # Plotting functions
     # ------------------
+
     def draw_slam_state(self, ax) -> None:
         # Draw landmarks
         if self.number_landmarks() > 0:
@@ -202,35 +152,6 @@ class SlamArtist:
         ax.axis('equal')
         ax.set_xlim(-5+self.robot.state[0],5+self.robot.state[0])
         ax.set_ylim(-5+self.robot.state[1],5+self.robot.state[1])
-    
-    def update_slam_state(self, num, slam_sys):
-        # Update landmarks
-        if slam_sys.number_landmarks() > 0:
-            self.a_markers.set_data(slam_sys.markers[0,:], slam_sys.markers[1,:])
-
-        # Update robot
-        new_arr = patches.FancyArrow(slam_sys.robot.state[0,0], slam_sys.robot.state[1,0],
-                                     self.arrow_scale * np.cos(slam_sys.robot.state[2,0]),
-                                     self.arrow_scale * np.sin(slam_sys.robot.state[2,0]),
-                                     head_width=self.hw*self.arrow_scale)
-        self.a_robot.xy = new_arr.xy
-
-        # Draw covariances
-        robot_cov_ellipse = self.make_ellipse(slam_sys.robot.state[0:2,0], slam_sys.P[0:2,0:2])
-        self.a_robot_cov.set_data(robot_cov_ellipse[0,:], robot_cov_ellipse[1,:])
-
-        # for i in range(self.number_landmarks()):
-        #     lmi = self.markers[:,i]
-        #     Plmi = self.P[3+2*i:3+2*(i+1),3+2*i:3+2*(i+1)]
-        #     lmi_cov_ellipse = self.make_ellipse(lmi, Plmi)
-        #     ax.plot(lmi_cov_ellipse[0,:], lmi_cov_ellipse[1,:], 'b-')
-        
-        # ax.axis('equal')
-        # ax.set_xlim(-5+self.robot.state[0],5+self.robot.state[0])
-        # ax.set_ylim(-5+self.robot.state[1],5+self.robot.state[1])
-        return self.a_markers, self.a_robot, self.a_robot_cov
-
-
     
     @staticmethod
     def make_ellipse(x, P):

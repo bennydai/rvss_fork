@@ -46,17 +46,13 @@ class SlamMap:
 
     @staticmethod
     def compute_armse(markers1, markers2):
+        # An implementation of Umeyama's method
         n = markers1.shape[1]
         mu1 = 1.0/n * np.sum(markers1, axis=1, keepdims=True)
         mu2 = 1.0/n * np.sum(markers2, axis=1, keepdims=True)
         Sigma = 1.0/n * np.dot((markers2 - mu2), (markers1 - mu1).transpose())
-        # print Sigma
 
         S = np.eye(2)
-        if np.linalg.det(Sigma) < 0:
-            print("mirroring coordinates")
-            #S[1,1] = -1
-        # print S
 
         U, D, VH = np.linalg.svd(Sigma)
 
@@ -64,7 +60,6 @@ class SlamMap:
         t = mu2 - np.dot(R, mu1)
 
         errors = markers2 - np.dot(R,markers1) - t
-        # print errors
 
         armse = np.sqrt( 1.0/n * np.sum(errors**2) )
         return armse, R, t

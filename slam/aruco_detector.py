@@ -42,34 +42,3 @@ class aruco_detector:
         cv2.aruco.drawDetectedMarkers(img_marked, corners, ids)
 
         return measurements, img_marked
-
-
-if __name__ == '__main__':
-    import Robot
-
-    img = cv2.imread("/home/pieter/Documents/repos/code_rvss2020_workshop/vslam/test_img.png")
-    K = np.array([[256.0501596,   0.,        148.28664955],
-                    [  0.,         256.0501596,  120.86729004],
-                    [  0.,           0.,           1.        ]])
-    dist = np.array([[-1.03571129e+00],
-                    [-2.28003976e+01],
-                    [-3.63713197e-03],
-                    [-1.08658434e-02],
-                    [ 5.00474231e+01],
-                    [-1.36353362e+00],
-                    [-2.07541469e+01],
-                    [ 4.68844178e+01],
-                    [ 0.00000000e+00],
-                    [ 0.00000000e+00],
-                    [ 0.00000000e+00],
-                    [ 0.00000000e+00],
-                    [ 0.00000000e+00],
-                    [ 0.00000000e+00]])
-    
-    robot = Robot.Robot(0.017,0.01,K,dist)
-    aruco_det = aruco_detector(robot, 0.07)
-    lms,marked_img = aruco_det.detect_marker_positions(img)
-
-    print(lms)
-    cv2.imshow("markers", marked_img)
-    cv2.waitKey(0)
