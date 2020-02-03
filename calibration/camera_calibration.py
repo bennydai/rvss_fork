@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     # calibrate camera
     print('Calibrating camera...')
-    calib.camera_calibration(dataDir)
+    camera_calibration(dataDir)
     print('Finished camera calibration.')
 
 
