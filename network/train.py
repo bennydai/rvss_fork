@@ -7,8 +7,13 @@ from nn_config import NNState
 
 
 class Train:
+    """
+    Simply run this script to train the network. You dont need to change this
+    script unless you know what you are doing :)
+    """
     def __init__(self):
         self.net_dict = NNState('train')
+        # Data Augmentation operations
         img_transforms = transforms.Compose(
             [transforms.RandomRotation((-30, 30)),
              transforms.RandomResizedCrop((64, 64), scale=(0.7, 1.0)),
@@ -27,7 +32,7 @@ class Train:
     def train(self):
         train_loader = DataLoader(dataset=self.train_data,
                                   batch_size=self.net_dict.batch_size,
-                                  shuffle=True, num_workers=2,
+                                  shuffle=True, num_workers=4,
                                   drop_last=True)
         n_batch = len(train_loader)
         for epoch_idx in range(self.net_dict.last_epoch + 1,

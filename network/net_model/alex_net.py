@@ -19,6 +19,7 @@ class AlexNet(nn.Module):
                                 nn.Linear(64, num_classes))
 
     def forward(self, x):
+        # turns off the backwards gradient to the feature extractor backbone
         with torch.no_grad():
             x = self.features(x)
         x = torch.flatten(x, 1)
