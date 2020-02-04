@@ -43,7 +43,7 @@ def calibrateWheelRadius():
 
     return scale
 
-def calibrateBaseline(self, scale):
+def calibrateBaseline(scale):
     # Compute the robot basline parameter using a range of wheel velocities.
     # For each wheel velocity, the robot scale parameter can be computed by
     # comparing the time elapsed and rotation completed to the input wheel
