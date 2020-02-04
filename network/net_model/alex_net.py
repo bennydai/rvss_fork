@@ -12,11 +12,11 @@ class AlexNet(nn.Module):
                     alex_features.children())[:-1])
         self.fc = nn.Sequential(
                                 nn.Dropout(p=0.5),
-                                nn.Linear(256*3*3, 512),
+                                nn.Linear(256*3*3, 1024),
                                 nn.ReLU(),
-                                nn.Linear(512, 64),
+                                nn.Linear(1024, 256),
                                 nn.ReLU(),
-                                nn.Linear(64, num_classes))
+                                nn.Linear(256, num_classes))
 
     def forward(self, x):
         # turns off the backwards gradient to the feature extractor backbone

@@ -1,3 +1,4 @@
+import sys
 import time
 
 import torch
@@ -168,8 +169,9 @@ class AnchorIMDB(Dataset):
 
 if __name__ == '__main__':
     exp = Evaluate()
-    img_path = './dataset_tools/example_raw_data/20.png'
-    img = Image.open(img_path)
+    # img_path = './dataset_tools/example_raw_data/20.png'
+    # img = Image.open(img_path)
+    # heat_map = exp.sliding_window(img)
+    img = Image.open(sys.argv[1])
     heat_map = exp.sliding_window(img)
-    # exp.sliding_window(sys.argv[1])
-    exp.visualise_heatmap(heat_map, img)
+    exp.visualise_heatmap(heat_map, img, overlay=True)
