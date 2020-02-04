@@ -43,10 +43,7 @@ class Operate:
             self.output = dh.OutputWriter('system_output')
         else:
             self.output = None
-        
-        self.process()
 
-        
     def __del__(self):
         self.ppi.set_velocity(0,0)
 
@@ -127,7 +124,7 @@ if __name__ == "__main__":
     operate = Operate(datadir, ppi, writeOutput=True)
 
     # Enter the main loop
-    operate.drive()
+    operate.process()
 
 
 
