@@ -5,12 +5,16 @@ sys.path.insert(0, "{}/integration".format(os.getcwd()))
 sys.path.insert(0, "../integration")
 import penguinPi as ppi
 
+MIN_SPEED = 10
+STEP = 10
+MAX_SPEED = 40
+
 def calibrateWheelRadius():
     # Compute the robot scale parameter using a range of wheel velocities.
     # For each wheel velocity, the robot scale parameter can be computed
     # by comparing the time and distance driven to the input wheel velocities.
 
-    wheel_velocities_range = range(5, 55, 5)
+    wheel_velocities_range = range(MIN_SPEED, MAX_SPEED, STEP)
     delta_times = []
 
     for wheel_vel in wheel_velocities_range:
@@ -49,7 +53,7 @@ def calibrateBaseline(scale):
     # comparing the time elapsed and rotation completed to the input wheel
     # velocities.
 
-    wheel_velocities_range = range(5, 55, 5)
+    wheel_velocities_range = range(MIN_SPEED, MAX_SPEED, STEP)
     delta_times = []
 
     for wheel_vel in wheel_velocities_range:
