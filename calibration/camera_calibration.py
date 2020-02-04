@@ -92,9 +92,8 @@ def image_collection(dataDir, images_to_collect):
         cv2.imwrite(filename,image)
 
 
-if __name__ == "__main__":   
-    currentDir = os.getcwd()
-    dataDir = "{}/camera_calibration/".format(currentDir)
+if __name__ == "__main__":
+    dataDir = "camera_calibration/"
     if not os.path.exists(dataDir):
         os.makedirs(dataDir)
     images_to_collect = 20
