@@ -1,11 +1,11 @@
 # This yaml file contains parameters essential to the network training
 
 # change the experiment name to start training a new one
-exp_name: 'pre_trained_01'
+exp_name: 'pre_trained_00'
 
 init_lr: 2.0e-4 # initial learning rate
 
-batch_size: 64
+batch_size: 128
 
 n_epochs: 80 # total number of epochs
 
@@ -24,6 +24,6 @@ gpu_ids: '0'
 #   For example, here, the learning rate is designed to be its 85%
 #   every 10 epoch.
 lr_scheduler:
-    step_size: 10
+    step_size: 5
     gamma: 0.85
 
