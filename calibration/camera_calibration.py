@@ -102,7 +102,7 @@ if __name__ == "__main__":
     # collect data
     print('Collecting {} images for camera calibration.'.format(images_to_collect))
     print('Press ENTER to capture image.')
-    image_collection(dataDir, images_to_collect)
+    # image_collection(dataDir, images_to_collect)
     print('Finished image collection.\n')
 
     # calibrate camera
