@@ -16,7 +16,7 @@ import slam.aruco_detector as aruco
 import slam.Measurements as Measurements
 
 class Operate:
-    def __init__(self, datadir, ppi, writeOutput=False, writeData=False):
+    def __init__(self, datadir, ppi, writeData=False):
         # Initialise data parameters
         self.ppi = ppi
         self.ppi.set_velocity(0,0)
@@ -39,10 +39,7 @@ class Operate:
         else:
             self.data = None
         
-        if writeOutput:
-            self.output = dh.OutputWriter('system_output')
-        else:
-            self.output = None
+        self.output = dh.OutputWriter('system_output')
 
     def __del__(self):
         self.ppi.set_velocity(0,0)
@@ -121,7 +118,7 @@ if __name__ == "__main__":
     # ppi = dh.DatasetPlayer("test")
 
     # Set up the integrated system
-    operate = Operate(datadir, ppi, writeOutput=True)
+    operate = Operate(datadir, ppi, writeData=False)
 
     # Enter the main loop
     operate.process()
