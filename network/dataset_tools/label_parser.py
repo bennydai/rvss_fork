@@ -40,7 +40,7 @@ def save_img(cv2_img, dataset_root, label):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
     file_count = len(glob.glob1(dir_path, '*.png'))
-    img_name = os.path.join(dir_path, f'{file_count:06}' + '.png')
+    img_name = os.path.join(dir_path, <prefix> + f'{file_count:06}' + '.png')
     cv2.imwrite(img_name, cv2_img)
 
 
