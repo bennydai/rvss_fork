@@ -106,8 +106,6 @@ class Operate:
             # Output visualisation
             self.display(fig, ax)
 
-
-        
        
 if __name__ == "__main__":   
     currentDir = os.getcwd()
@@ -118,7 +116,7 @@ if __name__ == "__main__":
     # ppi = dh.DatasetPlayer("test")
 
     # Set up the integrated system
-    operate = Operate(datadir, ppi, writeData=False)
+    operate = Operate(datadir, ppi, writeData=True)
 
     # Enter the main loop
     operate.process()
