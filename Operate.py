@@ -58,6 +58,7 @@ class Operate:
         return camera_matrix, dist_coeffs, scale, baseline
 
     def control(self):
+        self.keyboard.send_drive_signal()
         lv, rv = self.keyboard.latest_drive_signal()
         if not self.data is None:
             self.data.write_keyboard(lv, rv)
@@ -112,11 +113,11 @@ if __name__ == "__main__":
     datadir = "{}/testData/testCalibration/".format(currentDir)
     
     # Use either a real or simulated penguinpi
-    ppi = integration.penguinPiC.PenguinPi(ip = '192.168.50.1')
-    # ppi = dh.DatasetPlayer("test")
+    # ppi = integration.penguinPiC.PenguinPi(ip = '192.168.50.1')
+    ppi = dh.DatasetPlayer("test")
 
     # Set up the integrated system
-    operate = Operate(datadir, ppi, writeData=True)
+    operate = Operate(datadir, ppi, writeData=False)
 
     # Enter the main loop
     operate.process()
