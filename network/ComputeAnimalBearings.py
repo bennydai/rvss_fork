@@ -124,11 +124,11 @@ class PosedImage:
         #                     "bearing":bearings[animal]}
         #     bearing_line = json.dumps(bearing_dict)
 
-        bearings_list = {"pose": self.pose.tolist(),
+        bearings_list = [{"pose": self.pose.tolist(),
                             "animal": chosen_class,
-                            "bearing": float(bearing)}
+                            "bearing": float(bearing)}]
 
-        bearings_file.write(json.dumps(bearings_list))
+        bearings_file.write(json.dumps(bearings_list) + ',')
 
 if __name__ == "__main__":
     # Set up the network
