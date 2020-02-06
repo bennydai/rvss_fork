@@ -7,6 +7,7 @@ sys.path.insert(0, "../slam")
 from SlamMap import SlamMap
 from Triangulate import triangulate
 import matplotlib.pyplot as plt
+import csv
 
 def loadDataset(dataDir,slamFile='slam.txt',bearingFile='bearings.txt'):
 
@@ -16,8 +17,11 @@ def loadDataset(dataDir,slamFile='slam.txt',bearingFile='bearings.txt'):
     slammap.load(slamFilePath)
 
     #load bearings
-    with open('../system_output/bearings.txt') as f:
+    Filepath=dataDir+'/'+bearingFile
+    with open(Filepath) as f:
        bearing_dict = json.load(f)
+
+    print(bearing_dict)
 
     ConvertBearingDict(bearing_dict)
 
@@ -58,36 +62,50 @@ def combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2):
     for bearing in bearing_dict2:
         ConvertBearing(bearing,R,t)
 
-    bearing_dict1=bearing_dict1 + bearing_dict2
+    return bearing_dict1 + bearing_dict2
 
 if __name__ == '__main__':
     #Assumes results from each bot in a different directory
     #Combine all dictionaries into bearing_dict1
 
-    dataDir1='../system_output'
-    dataDir2='../someone_elses_system_output'
-    dataDir3=''
+    dataDir2='../system_output'
+    dataDir3='../SYTM_OUT_1'
+    dataDir1='../system_output_16'
+
     slammap1, bearing_dict1 = loadDataset(dataDir1)
-    if len(dataDir2)>0:
-        slammap2, bearing_dict2 = loadDataset(dataDir2)
-        combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2)
-    if len(dataDir3)>0:
-        slammap3, bearing_dict3 = loadDataset(dataDir3)
-        combineBearingDicts(slammap1,bearing_dict1,slammap3,bearing_dict3)
+    #if len(dataDir2)>0:
+    slammap2, bearing_dict2 = loadDataset(dataDir2)
+    bearing_dict1=combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2)
+    #if len(dataDir3)>0:
+    slammap3, bearing_dict3 = loadDataset(dataDir3)
+    bearing_dict1=combineBearingDicts(slammap1,bearing_dict1,slammap3,bearing_dict3)
 
     fig=plt.figure()
     #ax=fig.add_axes([0,0,1,1])
 
-    for animal in ("elephant", "crocodile","llama","snake"):
+    print(bearing_dict1)
+
+    output_animal = []
+    answer = []
+
+    with open('output_answer.csv', 'wb') as output_answer:
+        wr = csv.writer(output_answer, quoting=csv.QUOTE_ALL)
+
+    for animal in ("elephant","crocodile","llama","snake"):
         bearings = [x for x in bearing_dict1 if x["animal"] == animal]
         meas = [np.concatenate([detection["pose"].flatten(),np.array([detection["bearing"]])]) for detection in bearings]
         if len(meas) == 0:
             continue
         print('Position of ', animal)
+        output_animal.append(animal)
         ans=triangulate(np.array(meas))
         print(ans)
+        answer.append(ans)
         plt.scatter(ans[0],ans[1],label=animal)
         plt.legend()
         plt.grid(True)
+        # stuff = [animal, ans]
+        # wr.writerow(stuff)
+
 
 plt.show()
