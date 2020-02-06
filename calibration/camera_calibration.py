@@ -9,7 +9,7 @@ sys.path.insert(0, "../integration")
 import penguinPi as ppi
 
 def camera_calibration(dataDir):
-    # This file can be used to generate camera calibration parameters 
+    # This file can be used to generate camera calibration parameters
     # to improve the default values
 
     fileNameK = "{}intrinsic.txt".format(dataDir)
@@ -85,7 +85,8 @@ def camera_calibration(dataDir):
     plt.show()
 
 def image_collection(dataDir, images_to_collect):
-    for i in range(images_to_collect):             
+    for i in range(images_to_collect):
+        print("test")     
         input(i)
         image = ppi.get_image()
         filename = "{}{}.png".format(dataDir,i)
@@ -97,17 +98,15 @@ if __name__ == "__main__":
     if not os.path.exists(dataDir):
         os.makedirs(dataDir)
     images_to_collect = 20
-   
+
     # collect data
     print('Collecting {} images for camera calibration.'.format(images_to_collect))
+
     print('Press ENTER to capture image.')
-    # image_collection(dataDir, images_to_collect)
+    image_collection(dataDir, images_to_collect)
     print('Finished image collection.\n')
 
     # calibrate camera
     print('Calibrating camera...')
     camera_calibration(dataDir)
     print('Finished camera calibration.')
-
-
-    
