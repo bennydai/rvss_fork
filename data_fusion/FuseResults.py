@@ -65,14 +65,19 @@ def combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2):
     print(bearing_dict1)
 
 if __name__ == '__main__':
+    #Assumes results from each bot in a different directory
+    #Combine all dictionaries into bearing_dict1
 
-    dataDir2='../system_output'
-    dataDir='../someone_elses_system_output'
-    slammap1, bearing_dict1 = loadDataset(dataDir)
-
-    slammap2, bearing_dict2 = loadDataset(dataDir2)
-
-    combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2)
+    dataDir1='../system_output'
+    dataDir2='../someone_elses_system_output'
+    dataDir3=''
+    slammap1, bearing_dict1 = loadDataset(dataDir1)
+    if len(dataDir2)>0:
+        slammap2, bearing_dict2 = loadDataset(dataDir2)
+        combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2)
+    if len(dataDir3)>0:
+        slammap3, bearing_dict3 = loadDataset(dataDir3)
+        combineBearingDicts(slammap1,bearing_dict1,slammap3,bearing_dict3)
 
     for animal in ("elephant", "crocodile","llama","snake"):
         bearings = [x for x in bearing_dict1 if x["animal"] == animal]
