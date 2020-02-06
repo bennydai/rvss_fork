@@ -67,10 +67,13 @@ if __name__ == '__main__':
     for bearing in bearing_dict2:
         ConvertBearing(bearing,R,t)
 
-    bearing_dict=bearing_dict# ++ bearing_dict2
+    bearing_dict=bearing_dict + bearing_dict2
     print(bearing_dict)
 
     for animal in ("elephant", "crocodile","llama","snake"):
         bearings = [x for x in bearing_dict if x["animal"] == animal]
-        meas = [detection["pose"].hstack()(detection["bearing"]) for detection in bearings]
-        print(triangulate(meas))
+        meas = [np.concatenate([detection["pose"].flatten(),np.array([detection["bearing"]])]) for detection in bearings]
+        if len(meas) == 0:
+            continue
+        print('Position of ', animal)
+        print(triangulate(np.array(meas)))
