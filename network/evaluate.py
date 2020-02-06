@@ -55,7 +55,7 @@ class Evaluate:
         anchor_imdb = AnchorIMDB(all_anchors)
         anchor_loader = DataLoader(anchor_imdb,
                                    batch_size=num_patches*num_anchors,
-                                   shuffle=False, num_workers=4,
+                                   shuffle=False, num_workers=5,
                                    drop_last=False)
         heat_map = list()
         print('\n Inferring ...')
@@ -90,6 +90,7 @@ class Evaluate:
         elephant = np.array([66, 135, 245])/255.0
         llama = np.array([245, 114, 66])/255.0
         snake = np.array([16, 207, 6])/255.0
+        crocodile = np.array([255, 228, 225])/255.0
         bg = np.array([80, 80, 80])/255.0
         for i in range(h):
             for j in range(w):
@@ -101,10 +102,13 @@ class Evaluate:
                     out[i, j, :] = llama
                 elif heat_map[i, j] == 3:
                     out[i, j, :] = snake
+                elif heat_map[i, j] == 4:
+                    out[i, j, :] = crocodile
         bg_label = label_box.Patch(color=bg, label='bg[0]')
         elephant_label = label_box.Patch(color=elephant, label='elephant[1]')
         llama_label = label_box.Patch(color=llama, label='llama[2]')
         snake_label = label_box.Patch(color=snake, label='snake[3]')
+        crocodile_label = label_box.Patch(color=crocodile, label='crocodile[4]')
         if overlay:
             out = Image.fromarray((out*255).astype('uint8'))
             out = out.resize(img.size)
@@ -117,7 +121,7 @@ class Evaluate:
         else:
             fig, ax = plt.subplots(1, 2)
             ax[1].legend(handles=[bg_label, elephant_label, llama_label,
-                                  snake_label])
+                                  snake_label, crocodile_label])
             ax[0].imshow(img)
             ax[1].imshow(out)
         plt.show()
