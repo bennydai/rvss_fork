@@ -1,7 +1,7 @@
 from pynput.keyboard import Key, Listener, KeyCode
 
 class Keyboard:
-    wheel_vel_forward = 25
+    wheel_vel_forward = 20
     wheel_vel_rotation = 10
 
     def __init__(self, ppi=None):

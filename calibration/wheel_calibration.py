@@ -5,9 +5,9 @@ sys.path.insert(0, "{}/integration".format(os.getcwd()))
 sys.path.insert(0, "../integration")
 import penguinPi as ppi
 
-MIN_SPEED = 10
-STEP = 10
-MAX_SPEED = 40
+MIN_SPEED = 5
+STEP = 5
+MAX_SPEED = 30
 
 def calibrateWheelRadius():
     # Compute the robot scale parameter using a range of wheel velocities.
