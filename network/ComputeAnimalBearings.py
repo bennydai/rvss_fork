@@ -2,6 +2,10 @@ import evaluate
 from PIL import Image
 import json
 import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+num_classes = 4
 
 
 class PosedImage:
@@ -28,14 +32,42 @@ class PosedImage:
         # Now you need to convert this to a horizontal bearing as an angle.
         # Use the camera matrix for this!
 
+        for i in range(1, num_classes):
+            if np.any(heatmap == i):
+                mask = np.zeros(heatmap.shape)
+                mask[heatmap == i] = 255
+
+                moments = cv2.moments(mask)
+
+                # Remove blobs that do not pass this arbitary threshold
+                area = moments['m00']
+
+                if area > 1000:
+                    # calculate x,y coordinate of center
+                    cX = int(moments["m10"] / moments["m00"])
+                    cY = int(moments["m01"] / moments["m00"])
+
+                    print(cX, cY)
+                    plt.figure(1)
+                    plt.imshow(mask)
+                    plt.figure(2)
+                    plt.imshow(img)
+                    plt.show()
+                else:
+                    break
+
+
+
+
+
         # There are ways to get much better bearings.
         # Try and think of better solutions than just averaging.
 
-        for animal in bearings:
-            bearing_dict = {"pose":self.pose.tolist(),
-                            "animal":animal,
-                            "bearing":bearings[animal]}
-            bearing_line = json.dumps(bearing_dict)
+        # for animal in bearings:
+        #     bearing_dict = {"pose":self.pose.tolist(),
+        #                     "animal":animal,
+        #                     "bearing":bearings[animal]}
+        #     bearing_line = json.dumps(bearing_dict)
 
 
 if __name__ == "__main__":
