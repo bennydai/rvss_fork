@@ -54,24 +54,28 @@ def ConvertBearing(bearing,R,t):
         #bearing['theta']= R
         print(bearing['pose'])
 
-if __name__ == '__main__':
-
-    dataDir='../system_output'
-    dataDir2='../someone_elses_system_output'
-    slammap, bearing_dict = loadDataset(dataDir)
-
-    slammap2, bearing_dict2 = loadDataset(dataDir2)
-
-    armse, R, t=slammap.compute_tf(slammap2)
+def combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2):
+    #Converts and fuses bearing_dict2 into slammap1 frame and appends converted bearing_dict2 resutls to bearing_dict1
+    armse, R, t=slammap1.compute_tf(slammap2)
 
     for bearing in bearing_dict2:
         ConvertBearing(bearing,R,t)
 
-    bearing_dict=bearing_dict + bearing_dict2
-    print(bearing_dict)
+    bearing_dict1=bearing_dict1 + bearing_dict2
+    print(bearing_dict1)
+
+if __name__ == '__main__':
+
+    dataDir2='../system_output'
+    dataDir='../someone_elses_system_output'
+    slammap1, bearing_dict1 = loadDataset(dataDir)
+
+    slammap2, bearing_dict2 = loadDataset(dataDir2)
+
+    combineBearingDicts(slammap1,bearing_dict1,slammap2,bearing_dict2)
 
     for animal in ("elephant", "crocodile","llama","snake"):
-        bearings = [x for x in bearing_dict if x["animal"] == animal]
+        bearings = [x for x in bearing_dict1 if x["animal"] == animal]
         meas = [np.concatenate([detection["pose"].flatten(),np.array([detection["bearing"]])]) for detection in bearings]
         if len(meas) == 0:
             continue

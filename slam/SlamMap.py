@@ -37,8 +37,10 @@ class SlamMap:
         markers2 = other.markers.copy()
 
         # re-order the other markers to match self
-        idxlist = [other.taglist.index(tag) for tag in self.taglist]
+        idxlist = [other.taglist.index(tag) for tag in self.taglist if tag in other.taglist]
         markers2 = markers2[:, idxlist]
+        idxlist = [self.taglist.index(tag) for tag in other.taglist if tag in self.taglist]
+        markers1 = markers1[:, idxlist]
 
         armse, R, t = self.compute_armse(markers1, markers2)
 
