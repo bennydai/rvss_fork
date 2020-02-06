@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import cv2
 
 NUM_CLASSES = 4
-PIXEL_THRESHOLD = 500
+PIXEL_THRESHOLD = 100
 
 
 class PosedImage:
@@ -30,6 +30,19 @@ class PosedImage:
         # Obtain neural net output
         img = Image.open(folder_name+self.img_name)
         heatmap = neuralnet.sliding_window(img)
+        image = cv2.imread(folder_name+self.img_name)
+
+        # Loading the instrinsic and calculating scale
+        instrinsic = np.loadtxt('../testData/testCalibration/intrinsic.txt', delimiter=',')
+        scale = image.shape[1] / heatmap.shape[1]
+        print(scale)
+
+
+        # Load the instrinsic parameters
+        fx = instrinsic[0][0]
+        cx = instrinsic[0][2]
+        fy = instrinsic[1][1]
+        cy = instrinsic[1][2]
 
         # Compute animal bearings here and save to self.animals.
         # Next, you can use all this information to triangulate the animals!
@@ -50,7 +63,7 @@ class PosedImage:
                 mask = np.zeros(heatmap.shape)
                 mask[heatmap == i] = 255
 
-                mask = cv2.erode(mask,kernel,iterations = 1)
+                c_mask = mask.shape[0] / 2
 
                 moments = cv2.moments(mask)
 
@@ -59,17 +72,34 @@ class PosedImage:
 
                 print(self.class_list[i], area)
 
-                if area > 1:
+                if area > PIXEL_THRESHOLD:
                     # calculate x,y coordinate of center
-                    cX = int(moments["m10"] / moments["m00"])
-                    cY = int(moments["m01"] / moments["m00"])
+                    u = int(moments["m10"] / moments["m00"])
+                    v = int(moments["m01"] / moments["m00"])
 
-                    print(cX, cY)
+                    # If the image is on the left - should be negative
+                    if u >= c_mask:
+                        polarity = 1
+                    else:
+                        polarity = -1
+
+                    # Rescale u and v
+                    u = u * scale
+                    v = v * scale
+
+                    input = [u, v, 1]
+                    input = np.array(input).reshape((3,1))
+
+                    # Calculating the corresponding vector
+                    transformed = np.matmul(np.linalg.inv(instrinsic), input)
+                    bearing = np.arctan(transformed[0])
+                    print('Angle of object is ', np.rad2deg(bearing))
                     plt.figure(1)
                     plt.imshow(mask)
                     plt.figure(2)
                     plt.imshow(img)
                     plt.show()
+
                 else:
                     break
 
