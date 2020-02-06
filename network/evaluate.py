@@ -72,7 +72,7 @@ class Evaluate:
                 score, pred = torch.max(val, 1)
                 # score, pred = score.float(), pred.float()
                 # pred = torch.where(score > 0.99, pred, torch.zeros(pred.size()))
-                heat_map += pred.data.reshape(num_patches)
+                heat_map += pred.data.reshape(num_patches).tolist()
         print("--- %.3fs seconds ---" % (time.time() - start_time))
         heat_map = np.asarray(heat_map).reshape(w_out, h_out)
         return heat_map
