@@ -14,6 +14,7 @@ class PosedImage:
         self.pose = np.array(img_dict["pose"])
         self.img_name = img_dict["imgfname"]
         self.class_list = self.getList()
+        self.bearings_list = []
 
     def getList(self):
         baconFile = open('class_list.txt')
@@ -79,6 +80,9 @@ class PosedImage:
                     chosen_class = self.class_list[i]
                     moments_h = moments
 
+        if area_h == 0:
+            return
+
 
         print('Chose ', chosen_class, ' of area:', area_h)
 
@@ -120,12 +124,11 @@ class PosedImage:
         #                     "bearing":bearings[animal]}
         #     bearing_line = json.dumps(bearing_dict)
 
-        with open('../system_output/bearings.txt', 'a') as f:
-            bearing_dict = {"image_name": self.img_name,
-                            "pose": self.pose.tolist(),
+        bearings_list = {"pose": self.pose.tolist(),
                             "animal": chosen_class,
                             "bearing": float(bearing)}
-            f.write(json.dumps(bearing_dict) + '\n')
+
+        bearings_file.write(json.dumps(bearings_list))
 
 if __name__ == "__main__":
     # Set up the network
