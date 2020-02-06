@@ -124,9 +124,9 @@ class PosedImage:
         #                     "bearing":bearings[animal]}
         #     bearing_line = json.dumps(bearing_dict)
 
-        bearings_list = [{"pose": self.pose.tolist(),
+        bearings_list = {"pose": self.pose.tolist(),
                             "animal": chosen_class,
-                            "bearing": float(bearing)}]
+                            "bearing": float(bearing)}
 
         bearings_file.write(json.dumps(bearings_list) + ',')
 
@@ -142,5 +142,8 @@ if __name__ == "__main__":
     # Compute bearings and write to file
     bearings_fname = "../system_output/bearings.txt"
     with open(bearings_fname, 'w') as bearings_file:
+        bearings_file.write('[')
         for posed_image in posed_images:
             posed_image.write_bearings(exp, bearings_file, "../system_output/")
+
+        bearings_file.write(']')
