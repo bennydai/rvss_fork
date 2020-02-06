@@ -146,4 +146,10 @@ if __name__ == "__main__":
         for posed_image in posed_images:
             posed_image.write_bearings(exp, bearings_file, "../system_output/")
 
-        bearings_file.write(']')
+        bearings_file.close()
+
+    with open(bearings_fname, 'rb+') as bearings_file:
+        bearings_file.seek(-1, os.SEEK_END)
+        bearings_file.truncate()
+        fuck_string = ']'
+        bearings_file.write(bytes(fuck_string, encoding='utf8'))
