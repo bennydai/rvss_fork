@@ -1,38 +1,34 @@
-import evaluate
-from PIL import Image
-import json
 import numpy as np
 
+def eta(alpha):
+    return np.mat([
+        [-np.sin(alpha)], 
+        [np.cos(alpha)]
+    ])
 
-class PosedImage:
-    def __init__(self, json_line):
-        img_dict = json.loads(json_line)
-        self.pose = np.array(img_dict["pose"])
-        self.img_name = img_dict["imgfname"]
-        self.animals = []
-    
-    def compute_bearing(self, neuralnet, folder_name=""):
-        # Obtain neural net output
-        heatmap = neuralnet.sliding_window(folder_name+self.img_name)
+def rpk(theta):
+    return np.mat([
+        [np.cos(theta), -np.sin(theta)], 
+        [np.sin(theta),  np.cos(theta)]
+    ])
 
-        # Compute animal bearings here and save to self.animals.
-        # Next, you can use all this information to triangulate the animals!
-    
+def triangulate(meas):
+    n = np.shape(meas)[0]
+    xpk   = meas[:,0:2]
+    theta = meas[:,2]
+    alpha = meas[:,3]
+    A = np.zeros((n, 2))
+    b = np.zeros((n, 1))
+    for i in range(n):
+        A[i] = np.transpose(eta(alpha[i])) @ np.transpose(rpk(theta[i]))
+        b[i] = A[i] @ xpk[i]
+    return np.linalg.inv(np.transpose(A) @ A) @ np.transpose(A) @ b
 
+if __name__ == '__main__':
+    meas = np.array([
+        [0, 0, np.radians(  0), 0],
+        [0, 2, np.radians(315), 0],
+        [2, 0, np.radians(179), 0]
+    ])
+    print(triangulate(meas))
 
-
-
-if __name__ == "__main__":
-    exp = evaluate.Evaluate()
-    # img = 'dataset_tools/pibot_data_01/55.png'
-    # heat_map = exp.sliding_window(img)
-    # exp.visualise_heatmap(heat_map, Image.open(img))
-
-    data_fname = "../system_output/images.txt"
-    with open(data_fname, 'r') as data_file:
-        posed_images = [PosedImage(line) for line in data_file]
-
-    posed_images[0].compute_bearing(exp, "../system_output/")
-
-    print(posed_images[0].img_name)
-    print("good")
