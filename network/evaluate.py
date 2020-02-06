@@ -55,7 +55,7 @@ class Evaluate:
         anchor_imdb = AnchorIMDB(all_anchors)
         anchor_loader = DataLoader(anchor_imdb,
                                    batch_size=num_patches*num_anchors,
-                                   shuffle=False, num_workers=5,
+                                   shuffle=False, num_workers=4,
                                    drop_last=False)
         heat_map = list()
         print('\n Inferring ...')
@@ -70,9 +70,9 @@ class Evaluate:
                 val, _ = torch.max(x, 1)
                 # val = val.reshape((num_patches, -1))
                 score, pred = torch.max(val, 1)
-                # score, pred = score.float(), pred.float()
-                # pred = torch.where(score > 0.99, pred, torch.zeros(pred.size()))
-                heat_map += pred.data.reshape(num_patches).tolist()
+                score, pred = score.float(), pred.float()
+                pred = torch.where(score > 0.99, pred, torch.zeros(pred.size()))
+                heat_map += pred.data.reshape(num_patches)
         print("--- %.3fs seconds ---" % (time.time() - start_time))
         heat_map = np.asarray(heat_map).reshape(w_out, h_out)
         return heat_map
@@ -87,41 +87,43 @@ class Evaluate:
         """
         h, w = heat_map.shape
         out = np.ones((h, w, 3))
+        crocodile = np.array([30, 255, 255])/255.0
         elephant = np.array([66, 135, 245])/255.0
         llama = np.array([245, 114, 66])/255.0
         snake = np.array([16, 207, 6])/255.0
-        crocodile = np.array([255, 228, 225])/255.0
-        bg = np.array([80, 80, 80])/255.0
+        background = np.array([80, 80, 80])/255.0
+        
         for i in range(h):
             for j in range(w):
                 if heat_map[i, j] == 0:
-                    out[i, j, :] *= bg
+                    out[i, j, :] *= background
                 elif heat_map[i, j] == 1:
-                    out[i, j, :] = elephant
-                elif heat_map[i, j] == 2:
-                    out[i, j, :] = llama
-                elif heat_map[i, j] == 3:
-                    out[i, j, :] = snake
-                elif heat_map[i, j] == 4:
                     out[i, j, :] = crocodile
-        bg_label = label_box.Patch(color=bg, label='bg[0]')
-        elephant_label = label_box.Patch(color=elephant, label='elephant[1]')
-        llama_label = label_box.Patch(color=llama, label='llama[2]')
-        snake_label = label_box.Patch(color=snake, label='snake[3]')
-        crocodile_label = label_box.Patch(color=crocodile, label='crocodile[4]')
+                elif heat_map[i, j] == 2:
+                    out[i, j, :] = elephant
+                elif heat_map[i, j] == 3:
+                    out[i, j, :] = llama
+                elif heat_map[i, j] == 4:
+                    out[i, j, :] = snake
+                    
+        background_label = label_box.Patch(color=background, label='background[0]')
+        crocodile_label = label_box.Patch(color=crocodile, label='crocodile[1]')
+        elephant_label = label_box.Patch(color=elephant, label='elephant[2]')
+        llama_label = label_box.Patch(color=llama, label='llama[3]')
+        snake_label = label_box.Patch(color=snake, label='snake[4]')
         if overlay:
             out = Image.fromarray((out*255).astype('uint8'))
             out = out.resize(img.size)
             out = out.convert("RGBA")
             img = img.convert("RGBA")
             out = Image.blend(img, out, alpha=.6)
-            plt.legend(handles=[bg_label, elephant_label, llama_label,
+            plt.legend(handles=[background_label,crocodile_label, elephant_label, llama_label,
                                 snake_label])
             plt.imshow(out)
         else:
             fig, ax = plt.subplots(1, 2)
-            ax[1].legend(handles=[bg_label, elephant_label, llama_label,
-                                  snake_label, crocodile_label])
+            ax[1].legend(handles=[background_label,crocodile_label, elephant_label, llama_label,
+                                snake_label])
             ax[0].imshow(img)
             ax[1].imshow(out)
         plt.show()
@@ -174,7 +176,9 @@ class AnchorIMDB(Dataset):
 if __name__ == '__main__':
     exp = Evaluate()
     # img_path = './dataset_tools/example_raw_data/20.png'
-    # img = Image.open(img_path)
+#    img_path = '/Users/s436255/Downloads/RVSS/Capture.png'
+#    img = Image.open(img_path)
+#    print(img.shape)
     # heat_map = exp.sliding_window(img)
     img = Image.open(sys.argv[1])
     heat_map = exp.sliding_window(img)

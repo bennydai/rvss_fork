@@ -4,7 +4,7 @@ import torchvision.models as models
 
 
 class AlexNet(nn.Module):
-    def __init__(self, num_classes=3):
+    def __init__(self, num_classes=5):
         super(AlexNet, self).__init__()
         pre_trained_backbone = models.alexnet(pretrained=True)
         alex_features = pre_trained_backbone.features
@@ -28,5 +28,5 @@ class AlexNet(nn.Module):
 
 
 if __name__ == '__main__':
-    alexnet = AlexNet(3)
+    alexnet = AlexNet(5)
     print(alexnet)

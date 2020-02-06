@@ -4,10 +4,9 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+import os
 
 NUM_CLASSES = 4
-PIXEL_THRESHOLD = 100
-
 
 class PosedImage:
     def __init__(self, json_line):
@@ -56,7 +55,11 @@ class PosedImage:
         # Now you need to convert this to a horizontal bearing as an angle.
         # Use the camera matrix for this!
 
-        kernel = np.ones((3,3,), np.uint8)
+        print('Processing', self.img_name)
+
+        area_h = 0
+        moments_h = None
+        print(image.shape)
 
         for i in range(1, NUM_CLASSES):
             if np.any(heatmap == i):
@@ -70,40 +73,43 @@ class PosedImage:
                 # Remove blobs that do not pass this arbitary threshold
                 area = moments['m00']
 
-                print(self.class_list[i], area)
-
-                if area > PIXEL_THRESHOLD:
-                    # calculate x,y coordinate of center
-                    u = int(moments["m10"] / moments["m00"])
-                    v = int(moments["m01"] / moments["m00"])
-
-                    # If the image is on the left - should be negative
-                    if u >= c_mask:
-                        polarity = 1
-                    else:
-                        polarity = -1
-
-                    # Rescale u and v
-                    u = u * scale
-                    v = v * scale
-
-                    input = [u, v, 1]
-                    input = np.array(input).reshape((3,1))
-
-                    # Calculating the corresponding vector
-                    transformed = np.matmul(np.linalg.inv(instrinsic), input)
-                    bearing = np.arctan(transformed[0])
-                    print('Angle of object is ', np.rad2deg(bearing))
-                    plt.figure(1)
-                    plt.imshow(mask)
-                    plt.figure(2)
-                    plt.imshow(img)
-                    plt.show()
-
-                else:
-                    break
+                if area > area_h:
+                    print(self.class_list[i], area)
+                    area_h = area
+                    chosen_class = self.class_list[i]
+                    moments_h = moments
 
 
+        print('Chose ', chosen_class, ' of area:', area_h)
+
+        # calculate x,y coordinate of center
+        u = int(moments_h["m10"] / moments_h["m00"])
+        v = int(moments_h["m01"] / moments_h["m00"])
+
+        # If the image is on the left - should be negative
+        if u >= c_mask:
+            polarity = 1
+        else:
+            polarity = -1
+
+        # Rescale u and v
+        u = u * scale
+        v = v * scale
+
+        input = [u, v, 1]
+        input = np.array(input).reshape((3,1))
+
+        # Calculating the corresponding vector
+        transformed = np.matmul(np.linalg.inv(instrinsic), input)
+        bearing = np.arctan(transformed[0])
+        print('Coordinates is ', u, v)
+        print('Angle of object is ', np.rad2deg(-bearing))
+
+        # plt.figure(1)
+        # plt.imshow(mask)
+        # plt.figure(2)
+        # plt.imshow(img)
+        # plt.show()
 
         # There are ways to get much better bearings.
         # Try and think of better solutions than just averaging.
@@ -114,6 +120,12 @@ class PosedImage:
         #                     "bearing":bearings[animal]}
         #     bearing_line = json.dumps(bearing_dict)
 
+        with open('../system_output/bearings.txt', 'a') as f:
+            bearing_dict = {"image_nane": self.img_name,
+                            "pose": self.pose.tolist(),
+                            "animal": chosen_class,
+                            "bearing": float(bearing)}
+            f.write(json.dumps(bearing_dict))
 
 if __name__ == "__main__":
     # Set up the network
@@ -129,5 +141,3 @@ if __name__ == "__main__":
     with open(bearings_fname, 'w') as bearings_file:
         for posed_image in posed_images:
             posed_image.write_bearings(exp, bearings_file, "../system_output/")
-
-    
