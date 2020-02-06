@@ -5,7 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-num_classes = 4
+NUM_CLASSES = 4
+PIXEL_THRESHOLD = 500
 
 
 class PosedImage:
@@ -13,6 +14,16 @@ class PosedImage:
         img_dict = json.loads(json_line)
         self.pose = np.array(img_dict["pose"])
         self.img_name = img_dict["imgfname"]
+        self.class_list = self.getList()
+
+    def getList(self):
+        baconFile = open('class_list.txt')
+        baconContent = baconFile.readlines()
+        stuff = []
+        for shit in baconContent:
+            stuff.append(shit.strip())
+        baconFile.close()
+        return stuff
         
 
     def write_bearings(self, neuralnet, bearings_file, folder_name=""):
@@ -32,17 +43,23 @@ class PosedImage:
         # Now you need to convert this to a horizontal bearing as an angle.
         # Use the camera matrix for this!
 
-        for i in range(1, num_classes):
+        kernel = np.ones((3,3,), np.uint8)
+
+        for i in range(1, NUM_CLASSES):
             if np.any(heatmap == i):
                 mask = np.zeros(heatmap.shape)
                 mask[heatmap == i] = 255
+
+                mask = cv2.erode(mask,kernel,iterations = 1)
 
                 moments = cv2.moments(mask)
 
                 # Remove blobs that do not pass this arbitary threshold
                 area = moments['m00']
 
-                if area > 1000:
+                print(self.class_list[i], area)
+
+                if area > 1:
                     # calculate x,y coordinate of center
                     cX = int(moments["m10"] / moments["m00"])
                     cY = int(moments["m01"] / moments["m00"])
@@ -55,8 +72,6 @@ class PosedImage:
                     plt.show()
                 else:
                     break
-
-
 
 
 

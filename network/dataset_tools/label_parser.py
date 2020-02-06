@@ -15,7 +15,7 @@ def parse_label_file(img_dir, output_dir):
         img_path = os.path.join(img_dir, img_name)
         img = cv2.imread(img_path)
         #
-        if df['Label'][i] != 'Skip':
+        if df['Label'][i] != 'Skip' and df['Label'][i] != '{}':
             obj_struct = json.loads(df['Label'][i])
             obj_struct = obj_struct['objects']
             for i in range(len(obj_struct)):
@@ -40,9 +40,9 @@ def save_img(cv2_img, dataset_root, label):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
     file_count = len(glob.glob1(dir_path, '*.png'))
-    img_name = os.path.join(dir_path, <prefix> + f'{file_count:06}' + '.png')
+    img_name = os.path.join(dir_path, 'VL' + f'{file_count:06}' + '.png')
     cv2.imwrite(img_name, cv2_img)
 
 
 if __name__ == '__main__':
-    parse_label_file(<img_dir>, <export_dir>)
+    parse_label_file('C:\\Users\\thvil\\Downloads\\RVSS_2020_Workshop\\test', 'C:\\Users\\thvil\\Downloads\\RVSS_2020_Workshop\\network\\destination_folder')
