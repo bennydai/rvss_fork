@@ -121,11 +121,11 @@ class PosedImage:
         #     bearing_line = json.dumps(bearing_dict)
 
         with open('../system_output/bearings.txt', 'a') as f:
-            bearing_dict = {"image_nane": self.img_name,
+            bearing_dict = {"image_name": self.img_name,
                             "pose": self.pose.tolist(),
                             "animal": chosen_class,
                             "bearing": float(bearing)}
-            f.write(json.dumps(bearing_dict))
+            f.write(json.dumps(bearing_dict) + '\n')
 
 if __name__ == "__main__":
     # Set up the network
